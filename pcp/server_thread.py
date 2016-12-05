@@ -1,8 +1,8 @@
 import socket
-import server_thread
+import thread
 
 #servidor vou ter que passar por parametro
-HOST = '192.168.1.6'              # Endereco IP do Servidor
+HOST = '10.0.2.15'              # Endereco IP do Servidor
 PORT = 54321            # Porta que o Servidor esta
 
 def conectado(con, cliente):
@@ -15,7 +15,7 @@ def conectado(con, cliente):
 
     print 'Finalizando conexao do cliente', cliente
     con.close()
-    server_thread.exit()
+    thread.exit()
 
 tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -26,6 +26,6 @@ tcp.listen(1)
 
 while True:
     con, cliente = tcp.accept()
-    server_thread.start_new_thread(conectado, tuple([con, cliente]))
+    thread.start_new_thread(conectado, tuple([con, cliente]))
 
 tcp.close()
