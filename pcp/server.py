@@ -1,4 +1,4 @@
-''' import socket
+import socket
 import os
 import sys
 
@@ -10,6 +10,7 @@ tcp.bind(orig)
 tcp.listen(1)
 while True:
     con, cliente = tcp.accept()
+    print
     pid = os.fork()
     if pid == 0:
         tcp.close()
@@ -22,4 +23,4 @@ while True:
         con.close()
         sys.exit(0)
     else:
-        con.close() '''
+        con.close()
