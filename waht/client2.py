@@ -2,7 +2,7 @@ import socket
 import thread
 
 #servidor vou ter que passar por parametro
-HOST = '192.168.1.6'              # Endereco IP do Servidor
+HOST = '10.0.2.15'              # Endereco IP do Servidor
 PORT = 54321            # Porta que o Servidor esta
 
 def conectado(con, cliente):
