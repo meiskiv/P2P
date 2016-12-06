@@ -1,0 +1,31 @@
+#if id = par dosomething
+    #if id =pli dootherthing
+    #....
+
+    #fazer método pra colocar string no array de bytes e na base64
+
+
+    #msg = raw_input()
+    #   while msg != '\x18':
+    #      tcp.send(msg)
+    #     msg = raw_input()
+    #tcp.close()'''
+
+[22:49, 3/12/2016] Rodrigo Giglio: os dados
+[22:49, 3/12/2016] Rodrigo Giglio: é um array de string ou de byte ???
+[22:49, 3/12/2016] Rodrigo Giglio: falai icaro
+[22:49, 3/12/2016] Ícaro Castro: String
+[22:49, 3/12/2016] Rodrigo Giglio: ta
+[22:49, 3/12/2016] Ícaro Castro: dai tu converte cada string pra array de byte
+[22:49, 3/12/2016] Rodrigo Giglio: mas pra Base64
+[22:49, 3/12/2016] Ícaro Castro: isso
+[22:50, 3/12/2016] Ícaro Castro: vem uma string no formato base64
+[22:50, 3/12/2016] Rodrigo Giglio: mas oque vai no json
+[22:50, 3/12/2016] Ícaro Castro: dai de base64 tem que dar um decode pra byte[]
+[22:50, 3/12/2016] Rodrigo Giglio: é um array de string?
+[22:50, 3/12/2016] Ícaro Castro: é que depende da mensagem
+[22:50, 3/12/2016] Ícaro Castro: por exemplo
+[22:50, 3/12/2016] Ícaro Castro: se for uma de envio de arquivo
+[22:51, 3/12/2016] Ícaro Castro: vai ta um json object encapsulado uma string com nome do arquivo e uma string com os dados no formato base 64
+[22:52, 3/12/2016] Eduardo Pooch: É um String[] que vai
+[22:52, 3/12/2016] Eduardo Pooch: Nos dados
