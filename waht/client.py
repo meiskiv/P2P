@@ -59,9 +59,11 @@ class Client(threading.Thread):
             par = send_par(server_list)
             tcp.send(par)
 
-        if(msg['tipo'] == 'rar'):
+        if msg['tipo'] == 'rar':
+
             print "Arquivos chegaram"
             #atualizar arquivos_cliente.txt
+            #crio txts pra armazenar as coisas
 
         tcp.close()
 

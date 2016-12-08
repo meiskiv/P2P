@@ -9,7 +9,6 @@ PORT = 54321  # Porta que o Servidor esta
 LISTAARQ_SERVIDOR = '/home/meiski/PycharmProjects/P2P/pcp/files/'
 
 
-
 def send_rli():
     with open(LISTAARQ_SERVIDOR + 'arquivos_server.txt','r') as f:
         arquivos = f.read().splitlines()
@@ -20,14 +19,13 @@ def send_rli():
 
 def send_rar(nome_arq):
     arq = []
-    arq[0] = nome_arq
+    arq.append(nome_arq)
     ls = open(LISTAARQ_SERVIDOR + nome_arq, 'rb')
-    arq[1] = base64.encode(ls.read())
+    arq.append(base64.encodestring(ls.read()))
     ls.close()
     arq = q.Quadro('rar', arq).jsondumps()
+    print 'send_rar():', arq
     return arq
-
-
 
 while True:
     def conectado(con, cliente):
@@ -49,12 +47,10 @@ while True:
                 print 'Requisicao do cliente: ', deserj['dados']
                 arquivos = deserj['dados']
                 for i in range(len(arquivos)):
-                    print type(arquivos)
-                    print type(arquivos[i])
-                    rar = send_rar(arquivos[i])
+                    arq = arquivos[i]
+                    print arq
+                    rar = send_rar(arq)
                     con.sendall(rar)
-
-
 
             '''print 'Finalizando conexao do cliente', cliente
             con.close()
