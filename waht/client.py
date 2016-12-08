@@ -10,8 +10,8 @@ import os
 
 PORT = 54321            # Porta que o Servidor esta
 IPS = os.path.realpath('files/ips.txt')
-LISTAARQ_CLIENTE = os.path.realpath('files/arquivos_cliente.txt')
-ARQ_CLIENTE = os.path.realpath('files/')
+LISTAARQ_CLIENTE = os.path.realpath('files/arquivos_server.txt')
+ARQ_CLIENTE = os.path.realpath('files')
 
 threads = []
 
@@ -89,7 +89,7 @@ class Client(threading.Thread):
                 print 'Recebendo arquivos: ', arquivos
 
                 # crio txts pra armazenar as coisas
-                f = open(ARQ_CLIENTE + arquivos[0] + '\n', 'a')
+                f = open(ARQ_CLIENTE + '/' + arquivos[0], 'a')
                 f.write(base64.b64decode(arquivos[1]))
                 f.close()
 

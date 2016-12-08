@@ -22,13 +22,8 @@ def send_rli():
 def send_rar(nome_arq):
     arq = []
     arq.append(nome_arq)
-    try:
-        ls = open(ARQ_SERVIDOR + '/' + nome_arq, 'rb')
-        arq.append(base64.encodestring(ls.read()))
-    except IOError:
-        ls = open(ARQ_SERVIDOR + '/' + nome_arq, 'arb')
-        ls.write('textotextotextote')
-        arq.append(base64.encodestring(ls.read()))
+    ls = open(ARQ_SERVIDOR + '/' + nome_arq, 'rb')
+    arq.append(base64.encodestring(ls.read()))
     ls.close()
     arq = q.Quadro('rar', arq).jsondumps()
     print 'send_rar():', arq
