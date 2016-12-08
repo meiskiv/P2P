@@ -8,11 +8,12 @@ import errno
 import base64
 import os
 PORT = 54321            # Porta que o Servidor esta
-IPS = os.path.realpath('files/ips.txt')
-ARQUIVO_CLIENTE = os.path.realpath('files/arquivos_cliente.txt')
+IPS = '/home/meiski/PycharmProjects/P2P/pcp/files/ips.txt'
+ARQUIVO_CLIENTE = '/home/meiski/PycharmProjects/P2P/pcp/files/arquivos_cliente.txt'
 threads = []
 
-with open(IPS, 'r') as f:
+print os.path.abspath('files')
+with open(IPS,'r') as f:
     ips = f.read().splitlines()
     f.close()
 
@@ -96,7 +97,7 @@ class Client(threading.Thread):
         tcp.close()
 
 
-print 'Iniciando requisições...'
+print 'Iniciando requisicoes...'
 for t in range(len(ips)):
     thread = Client(ips[t])
     thread.start()

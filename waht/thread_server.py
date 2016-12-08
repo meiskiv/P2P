@@ -3,14 +3,15 @@ import json
 import thread
 import quadro as q
 import base64
+import os
 
 HOST = '192.168.25.27'  # Endereco IP do Servidor
 PORT = 54321  # Porta que o Servidor esta
-LISTAARQ_SERVIDOR = '/home/meiski/PycharmProjects/P2P/pcp/files/'
+LISTAARQ_SERVIDOR = os.path.realpath('files/arquivos_server.txt')
 
 
 def send_rli():
-    with open(LISTAARQ_SERVIDOR + 'arquivos_server.txt','r') as f:
+    with open(LISTAARQ_SERVIDOR,'r') as f:
         arquivos = f.read().splitlines()
         f.close()
         arquivos = q.Quadro('rli', arquivos).jsondumps()
@@ -29,7 +30,7 @@ def send_rar(nome_arq):
 
 while True:
     def conectado(con, cliente):
-        print 'Conectado por', cliente
+        print '\nConectado por', cliente
 
         while True:
             quadro = con.recv(1024)
