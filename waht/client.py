@@ -83,12 +83,14 @@ class Client(threading.Thread):
                 print 'Recebendo arquivos: ', arquivos
 
                 # crio txts pra armazenar as coisas
-                f = open(arquivos[0] + '\t', 'wa')
+                f = open(arquivos[0] + '\t', 'a')
                 f.write(base64.b64decode(arquivos[1]))
+                f.close()
 
                 # atualizar arquivos_cliente.txt
                 f= open(ARQUIVO_CLIENTE, 'a')
                 f.write('\n' + arquivos[0])
+                f.close()
 
 
         tcp.close()
