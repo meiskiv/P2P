@@ -6,5 +6,7 @@ class Quadro(object):
         self.tipo = tipo
         self.dados = dados
 
-    def tojson(self):
-        return json.dump(Quadro.self.__dict__)
+    def jsondumps(self):
+        jd = json.dumps(self.__dict__)
+        return jd
+

@@ -1,21 +1,22 @@
 import socket
 import json
 import thread
-import quadro
+import quadro as q
 
-HOST = '10.0.2.15'              # Endereco IP do Servidor
+HOST = '192.168.25.27'              # Endereco IP do Servidor
 PORT = 54321                        #  Porta que o Servidor esta
 
 
-#json_dados = '{"tipo": tipo, "dados": dados'}'
 def send_rli():
-    with open('/home/user/PycharmProjects/P2P/pcp/files/arquivos.txt') as f:
-        arquivos = f.readlines()
-        print arquivos
+    with open('/home/meiski/PycharmProjects/P2P/pcp/files/arquivos_server.txt') as f:
+        arquivos = f.read().splitlines()
         f.close()
-    quadro.Quadro
+        arquivos = q.Quadro('rli',arquivos).jsondumps()
+        return arquivos
 
 
+def send_rar():
+    print 'rar'
             #logica pra mandar nome do arquivo e arquivo codificado blah blah
 
 
@@ -26,11 +27,15 @@ while True:
         while True:
             quadro = con.recv(1024)
             deserj = json.loads(quadro)
-          #  print deserj
-            print cliente, quadro
+            print cliente, quadro,'\n'
 
+            # envia para o cliente a lista de arquivos que possui
             if (deserj['tipo']) == 'pli':
-                 send_rli()
+                quadrorli = send_rli()
+                print '\tquadroRLI  ', quadrorli
+                con.sendall(quadrorli)
+
+
             print 'Finalizando conexao do cliente', cliente
             con.close()
             thread.exit()
@@ -38,7 +43,7 @@ while True:
     tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     orig = (HOST, PORT)
     tcp.bind(orig)
-    tcp.listen(1)
+    tcp.listen(5)
 
     while True:
         con, cliente = tcp.accept()
