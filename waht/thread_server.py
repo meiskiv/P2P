@@ -50,11 +50,14 @@ while True:
                     arq = arquivos[i]
                     print arq
                     rar = send_rar(arq)
-                    con.sendall(rar)
+                    p = con.sendall(rar)
+                    if p is None:
+                        print 'rar enviado com sucesso'
+                    else: print 'ar nao enviado'
 
-            '''print 'Finalizando conexao do cliente', cliente
-            con.close()
-            thread.exit()'''
+                print 'Finalizando conexao do cliente', cliente
+                con.close()
+                thread.exit()
 
 
     tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

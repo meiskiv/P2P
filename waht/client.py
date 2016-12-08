@@ -3,6 +3,8 @@ import threading
 import socket
 import json
 import quadro as q
+from socket import error as SocketError
+import errno
 PORT = 54321            # Porta que o Servidor esta
 IPS = '/home/meiski/PycharmProjects/P2P/pcp/files/ips.txt'
 ARQUIVO_CLIENTE = '/home/meiski/PycharmProjects/P2P/pcp/files/arquivos_cliente.txt'
@@ -13,9 +15,11 @@ with open(IPS,'r') as f:
     ips = f.read().splitlines()
     f.close()
 
+
 def send_par(list):
     list = q.Quadro('par', list).jsondumps()
     return list
+
 
 class Client(threading.Thread):
     def __init__(self, ip):
@@ -37,16 +41,18 @@ class Client(threading.Thread):
         msg = tcp.recv(1024)
         msg = json.loads(msg)
 
-        #se o servidor responder com a lista de arquivos dele
+
+        # while True:
+        # se o servidor responder com a lista de arquivos dele
         if msg['tipo'] == 'rli':
-            server_files = msg
-            print '\tlista que recebi do servidor: ', server_files['dados']
+            server_files = msg['dados']
+            print '\tlista que recebi do servidor: ', server_files
             with open(ARQUIVO_CLIENTE, 'r') as f:
                 client_list = f.read().splitlines()
                 f.close()
 
             print '\tarquivos no cliente: ', client_list
-            server_list = server_files['dados']
+            server_list = server_files
 
             # compara client_files e server_list, remove o que o cliente ja tiver
             rppitems = list(set(client_list) & set(server_list))
@@ -57,15 +63,28 @@ class Client(threading.Thread):
 
             #envia uma requisicao de arquivos para o servidor
             par = send_par(server_list)
-            tcp.send(par)
+            try:
+                tcp.send(par)
+            except SocketError as e:
+                if e.errno != errno.ECONNRESET:
+                    raise
+                pass
+                print 'except SocketError NO PAR'
 
-        if msg['tipo'] == 'rar':
+        for r in range(len(server_list)):
+            msg = tcp.recv(1024)
+            msg = json.loads(msg)
+            print 'msg: ', msg['dados']
+                # recebe arquivos que estavam faltando
+            if msg['tipo'] == 'rar':
+                arquivos = msg['dados']
+                print 'Recebendo arquivos: ', arquivos
 
-            print "Arquivos chegaram"
-            #atualizar arquivos_cliente.txt
-            #crio txts pra armazenar as coisas
+            # atualizar arquivos_cliente.txt
+            # crio txts pra armazenar as coisas
 
         tcp.close()
+
 
 print 'Iniciando requisicoes...'
 for t in range(len(ips)):
