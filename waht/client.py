@@ -7,9 +7,12 @@ from socket import error as SocketError
 import errno
 import base64
 import os
+
 PORT = 54321            # Porta que o Servidor esta
 IPS = os.path.realpath('files/ips.txt')
-ARQUIVO_CLIENTE = os.path.realpath('files/arquivos_cliente.txt')
+LISTAARQ_CLIENTE = os.path.realpath('files/arquivos_cliente.txt')
+ARQ_CLIENTE = os.path.realpath('files/')
+
 threads = []
 
 with open(IPS, 'r') as f:
@@ -31,7 +34,10 @@ class Client(threading.Thread):
         print '\nFazendo requisicao no IP: ', self.ip
         tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         dest = (self.ip, PORT)
-        tcp.connect(dest)
+        try:
+            tcp.connect(dest)
+        except SocketError as e:
+            print 'Erro na conexao, exacute novamente. \nErro: ', e
         print 'Conectado com: ', tcp.getsockname
 
         # manda requisicao da lista de arquivos tem
@@ -48,7 +54,7 @@ class Client(threading.Thread):
         if msg['tipo'] == 'rli':
             server_files = msg['dados']
             print '\tlista que recebi do servidor: ', server_files
-            with open(ARQUIVO_CLIENTE, 'r') as f:
+            with open(LISTAARQ_CLIENTE, 'r') as f:
                 client_list = f.read().splitlines()
                 f.close()
 
@@ -83,12 +89,12 @@ class Client(threading.Thread):
                 print 'Recebendo arquivos: ', arquivos
 
                 # crio txts pra armazenar as coisas
-                f = open(arquivos[0] + '\t', 'a')
+                f = open(ARQ_CLIENTE + arquivos[0] + '\n', 'a')
                 f.write(base64.b64decode(arquivos[1]))
                 f.close()
 
                 # atualizar arquivos_cliente.txt
-                f= open(ARQUIVO_CLIENTE, 'a')
+                f= open(LISTAARQ_CLIENTE, 'a')
                 f.write('\n' + arquivos[0])
                 f.close()
 
@@ -96,7 +102,7 @@ class Client(threading.Thread):
         tcp.close()
 
 
-print 'Iniciando requisições...'
+print 'Iniciando requisicoes...'
 for t in range(len(ips)):
     thread = Client(ips[t])
     thread.start()
