@@ -13,6 +13,10 @@ with open(IPS,'r') as f:
     ips = f.read().splitlines()
     f.close()
 
+def send_par(list):
+    list = q.Quadro('par',list).jsondumps()
+    return list
+
 class Client(threading.Thread):
     def __init__(self, ip):
         threading.Thread.__init__(self)
@@ -23,35 +27,40 @@ class Client(threading.Thread):
         tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         dest = (self.ip, PORT)
         tcp.connect(dest)
+        print 'Conectado com: ', tcp.getsockname
 
         # manda requisicao da lista de arquivos tem
         j = q.Quadro("pli", None).jsondumps()
         tcp.send(j)
 
         # recebe a lista e seleciona os arquivos que precisa
-        server_files = tcp.recv(1024)
-        print '\tlista que recebi do servidor: ', server_files
-        server_files = json.loads(server_files)
+        msg = tcp.recv(1024)
+        msg = json.loads(msg)
 
-        if server_files['tipo'] == 'rli':
+        #se o servidor responder com a lista de arquivos dele
+        if msg['tipo'] == 'rli':
+            server_files = msg
+            print '\tlista que recebi do servidor: ', server_files['dados']
             with open(ARQUIVO_CLIENTE, 'r') as f:
-                client_files = f.read().splitlines()
+                client_list = f.read().splitlines()
                 f.close()
 
-            print '\tarquivos no cliente: ', client_files
+            print '\tarquivos no cliente: ', client_list
             server_list = server_files['dados']
 
             # compara client_files e server_list, remove o que o cliente ja tiver
-            rppitems = list(set(client_files) & set(server_list))
+            rppitems = list(set(client_list) & set(server_list))
             for t in range(len(rppitems)):
                 server_list.remove(rppitems[t])
             #na server_list sobra soh o que o cliente nao tem
             print 'arquivos que o cliente precisa: ', server_list
 
-            # logica pra comparar meus arquivos com o do servidor
+            #envia um requisicao de arquivo pro servidor
+            arquivos = send_par(server_list)
+            tcp.send(arquivos)
 
-
-
+        if(msg['tipo'] == 'rar'):
+            print "Arquivos chegaram"
 
         tcp.close()
 

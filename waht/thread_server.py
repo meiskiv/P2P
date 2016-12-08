@@ -35,10 +35,13 @@ while True:
                 print '\tquadroRLI  ', quadrorli
                 con.sendall(quadrorli)
 
+            # recebe do cliente a lista de arquivos para enviar
+            if (deserj['tipo']) == 'par':
+                print 'requisicao do cliente: ', deserj['dados']
 
-            print 'Finalizando conexao do cliente', cliente
+            '''print 'Finalizando conexao do cliente', cliente
             con.close()
-            thread.exit()
+            thread.exit()'''
 
     tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     orig = (HOST, PORT)
