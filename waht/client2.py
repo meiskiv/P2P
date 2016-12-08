@@ -9,7 +9,7 @@ import base64
 import os
 PORT = 54321            # Porta que o Servidor esta
 IPS = '/home/meiski/PycharmProjects/P2P/pcp/files/ips.txt'
-ARQUIVO_CLIENTE = '/home/meiski/PycharmProjects/P2P/pcp/files/arquivos_cliente.txt'
+ARQUIVO_CLIENTE = '/home/meiski/PycharmProjects/P2P/pcp/files/lista_arquivos.txt'
 threads = []
 
 print os.path.abspath('files')
@@ -88,7 +88,7 @@ class Client(threading.Thread):
                 f.write(base64.b64decode(arquivos[1]))
                 f.close()
 
-                # atualizar arquivos_cliente.txt
+                # atualizar lista_arquivos.txt
                 f= open(ARQUIVO_CLIENTE, 'a')
                 f.write('\n' + arquivos[0])
                 f.close()

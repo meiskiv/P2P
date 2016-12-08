@@ -10,8 +10,8 @@ import os
 
 PORT = 54321            # Porta que o Servidor esta
 IPS = os.path.realpath('files/ips.txt')
-LISTAARQ_CLIENTE = os.path.realpath('files/arquivos_server.txt')
-ARQ_CLIENTE = os.path.realpath('files')
+LISTA_ARQ = os.path.realpath('files/lista_arquivos.txt')
+ARQ = os.path.realpath('files')
 
 threads = []
 
@@ -54,7 +54,7 @@ class Client(threading.Thread):
         if msg['tipo'] == 'rli':
             server_files = msg['dados']
             print '\tlista que recebi do servidor: ', server_files
-            with open(LISTAARQ_CLIENTE, 'r') as f:
+            with open(LISTA_ARQ, 'r') as f:
                 client_list = f.read().splitlines()
                 f.close()
 
@@ -89,12 +89,12 @@ class Client(threading.Thread):
                 print 'Recebendo arquivos: ', arquivos
 
                 # crio txts pra armazenar as coisas
-                f = open(ARQ_CLIENTE + '/' + arquivos[0], 'a')
+                f = open(ARQ + '/' + arquivos[0], 'a')
                 f.write(base64.b64decode(arquivos[1]))
                 f.close()
 
-                # atualizar arquivos_cliente.txt
-                f= open(LISTAARQ_CLIENTE, 'a')
+                # atualizar lista_arquivos.txt
+                f= open(LISTA_ARQ, 'a')
                 f.write('\n' + arquivos[0])
                 f.close()
 

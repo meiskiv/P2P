@@ -7,12 +7,12 @@ import os
 
 HOST = '192.168.25.27'  # Endereco IP do Servidor
 PORT = 54321  # Porta que o Servidor esta
-LISTAARQ_SERVIDOR = os.path.realpath('files/arquivos_server.txt')
-ARQ_SERVIDOR = os.path.realpath('files')
+LISTA_ARQ = os.path.realpath('files/lista_arquivos.txt')
+ARQ = os.path.realpath('files')
 
 
 def send_rli():
-    with open(LISTAARQ_SERVIDOR,'r') as f:
+    with open(LISTA_ARQ,'r') as f:
         arquivos = f.read().splitlines()
         f.close()
         arquivos = q.Quadro('rli', arquivos).jsondumps()
@@ -22,7 +22,7 @@ def send_rli():
 def send_rar(nome_arq):
     arq = []
     arq.append(nome_arq)
-    ls = open(ARQ_SERVIDOR + '/' + nome_arq, 'rb')
+    ls = open(ARQ + '/' + nome_arq, 'rb')
     arq.append(base64.encodestring(ls.read()))
     ls.close()
     arq = q.Quadro('rar', arq).jsondumps()
