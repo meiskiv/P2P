@@ -5,6 +5,7 @@ import json
 import quadro as q
 from socket import error as SocketError
 import errno
+import base64
 PORT = 54321            # Porta que o Servidor esta
 IPS = '/home/meiski/PycharmProjects/P2P/pcp/files/ips.txt'
 ARQUIVO_CLIENTE = '/home/meiski/PycharmProjects/P2P/pcp/files/arquivos_cliente.txt'
@@ -27,7 +28,7 @@ class Client(threading.Thread):
         self.ip = ip
 
     def run(self):
-        print 'Fazendo requisicao no IP: ', self.ip
+        print '\nFazendo requisicao no IP: ', self.ip
         tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         dest = (self.ip, PORT)
         tcp.connect(dest)
@@ -75,13 +76,20 @@ class Client(threading.Thread):
             msg = tcp.recv(1024)
             msg = json.loads(msg)
             print 'msg: ', msg['dados']
-                # recebe arquivos que estavam faltando
+
+            # recebe arquivos que estavam faltando
             if msg['tipo'] == 'rar':
                 arquivos = msg['dados']
                 print 'Recebendo arquivos: ', arquivos
 
-            # atualizar arquivos_cliente.txt
-            # crio txts pra armazenar as coisas
+                # crio txts pra armazenar as coisas
+                f = open(arquivos[0] + '\t', 'wa')
+                f.write(base64.b64decode(arquivos[1]))
+
+                # atualizar arquivos_cliente.txt
+                f= open(ARQUIVO_CLIENTE, 'a')
+                f.write('\n' + arquivos[0])
+
 
         tcp.close()
 
