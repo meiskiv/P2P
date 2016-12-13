@@ -7,12 +7,14 @@ from socket import error as SocketError
 import errno
 import base64
 import os
+import sys
 
 PORT = 54321            # Porta que o Servidor esta
 IPS = os.path.realpath('files/ips.txt')
-LISTA_ARQ = os.path.realpath('files/lista_arquivos.txt')
-ARQ = os.path.realpath('files')
-
+LISTA_ARQ = '/home/meiski/PycharmProjects/P2P/waht/files/files_client/lista_client.txt'
+ARQ = '/home/meiski/PycharmProjects/P2P/waht/files/files_client'
+#LISTA_ARQ = os.path.realpath('files/lista_arquivos.txt')
+#ARQ = os.path.realpath('files')
 threads = []
 
 with open(IPS, 'r') as f:
@@ -31,16 +33,17 @@ class Client(threading.Thread):
         self.ip = ip
 
     def run(self):
-        print '\nFazendo requisicao no IP: ', self.ip
+        print '\nFazendo requisicao no IP: ', ips
         tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         dest = (self.ip, PORT)
         try:
             tcp.connect(dest)
         except SocketError as e:
-            print 'Erro na conexao, exacute novamente. \nErro: ', e
+            print 'Erro na conexao, execute novamente. \nErro: ', e
+            sys.exit()
         print 'Conectado com: ', tcp.getsockname
 
-        # manda requisicao da lista de arquivos tem
+        # manda requisicao para lista de arquivos que servidor possui
         j = q.Quadro("pli", None).jsondumps()
         tcp.send(j)
 
@@ -48,8 +51,6 @@ class Client(threading.Thread):
         msg = tcp.recv(1024)
         msg = json.loads(msg)
 
-
-        # while True:
         # se o servidor responder com a lista de arquivos dele
         if msg['tipo'] == 'rli':
             server_files = msg['dados']
@@ -79,25 +80,23 @@ class Client(threading.Thread):
                 print 'except SocketError NO PAR'
 
         for r in range(len(server_list)):
-            msg = tcp.recv(1024)
-            msg = json.loads(msg)
-            print 'msg: ', msg['dados']
-
+            jmsg = tcp.recv(1024)
+            print '\tjmsg: ', jmsg
+            print type(jmsg)
+            msg = json.loads(jmsg)
+            print type(msg)
+            print 'Tramissao ', r,':', 'msg [dados]: ', msg['dados']
             # recebe arquivos que estavam faltando
-            if msg['tipo'] == 'rar':
-                arquivos = msg['dados']
-                print 'Recebendo arquivos: ', arquivos
-
-                # crio txts pra armazenar as coisas
-                f = open(ARQ + '/' + arquivos[0], 'a')
-                f.write(base64.b64decode(arquivos[1]))
-                f.close()
-
-                # atualizar lista_arquivos.txt
-                f= open(LISTA_ARQ, 'a')
-                f.write('\n' + arquivos[0])
-                f.close()
-
+            arquivos = msg['dados']
+            print 'Recebendo arquivo: ', arquivos
+            # crio .txts pra armazenar as coisas
+            f = open(ARQ + '/' + arquivos[0], 'a')
+            f.write(base64.b64decode(arquivos[1]))
+            f.close()
+            # atualizar lista_arquivos.txt
+            f= open(LISTA_ARQ, 'a')
+            f.write(arquivos[0]+'\n')
+            f.close()
 
         tcp.close()
 

@@ -3,16 +3,17 @@ import json
 import thread
 import quadro as q
 import base64
-import os
 
-HOST = '192.168.25.27'  # Endereco IP do Servidor
+HOST = '192.168.0.107'  # Endereco IP do Servidor
 PORT = 54321  # Porta que o Servidor esta
-LISTA_ARQ = os.path.realpath('files/lista_arquivos.txt')
-ARQ = os.path.realpath('files')
+LISTA_ARQ = '/home/meiski/PycharmProjects/P2P/waht/files/files_server/lista_server.txt'
+ARQ = '/home/meiski/PycharmProjects/P2P/waht/files/files_server'
+#LISTA_ARQ = os.path.realpath('files/lista_arquivos.txt')
+#ARQ = os.path.realpath('files')
 
 
 def send_rli():
-    with open(LISTA_ARQ,'r') as f:
+    with open(LISTA_ARQ, 'r') as f:
         arquivos = f.read().splitlines()
         f.close()
         arquivos = q.Quadro('rli', arquivos).jsondumps()
@@ -50,12 +51,12 @@ while True:
                 arquivos = deserj['dados']
                 for i in range(len(arquivos)):
                     arq = arquivos[i]
-                    print arq
+                    print 'arquivos', i, arq
                     rar = send_rar(arq)
                     p = con.sendall(rar)
                     if p is None:
                         print 'rar enviado com sucesso'
-                    else: print 'ar nao enviado'
+                    else: print 'rar nao enviado'
 
                 print 'Finalizando conexao do cliente', cliente
                 con.close()
@@ -66,6 +67,7 @@ while True:
     orig = (HOST, PORT)
     tcp.bind(orig)
     tcp.listen(5)
+    print 'Aguardando requisicoes....'
 
     while True:
         con, cliente = tcp.accept()
