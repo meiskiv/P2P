@@ -65,11 +65,10 @@ class Client(threading.Thread):
             server_list = server_files
             
             # compara os arquivos do cliente e do servidor, remove o que o cliente ja tiver
-            rppitems = list(set(client_list) & set(server_list))
-            for t in range(len(rppitems)):
-                server_list.remove(rppitems[t])
+            itensRepetidos = list(set(client_list) & set(server_list))
+            for t in range(len(itensRepetidos)):
+                server_list.remove(itensRepetidos[t])
                 
-            #na server_list sobra só que o cliente nao tem
             print 'arquivos que o cliente precisa: ', server_list
 
             #envia uma requisicao de arquivos para o servidor
