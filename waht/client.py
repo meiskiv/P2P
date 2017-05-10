@@ -9,23 +9,26 @@ import base64
 import os
 import sys
 
-PORT = 54321            # Porta que o Servidor esta
-IPS = os.path.realpath('files/ips.txt')
-LISTA_ARQ = '/home/meiski/PycharmProjects/P2P/waht/files/files_client/lista_client.txt'
-ARQ = '/home/meiski/PycharmProjects/P2P/waht/files/files_client'
-#LISTA_ARQ = os.path.realpath('files/lista_arquivos.txt')
-#ARQ = os.path.realpath('files')
-threads = []
+'''
+Esta classe é responsável por requerir a conexão com o servidor
+...Enviar requisição de lista de arquivos
+...Identificar arquivos que o cliente possui
+e que estão disponíveis no servidor.
+'''
+
+PORT = 54321                               # Porta que o Servidor esta
+IPS = os.path.realpath('files/ips.txt')     #Necessário atualizar
+LISTA_ARQ = '/home/meiski/PycharmProjects/P2P/waht/files/files_client/lista_client.txt' #Necessário atualizar
+ARQ = '/home/meiski/PycharmProjects/P2P/waht/files/files_client'#Necessário atualizar
+threads = []                                #Gero um array de threads
 
 with open(IPS, 'r') as f:
     ips = f.read().splitlines()
     f.close()
 
-
 def send_par(list):
     list = q.Quadro('par', list).jsondumps()
     return list
-
 
 class Client(threading.Thread):
     def __init__(self, ip):
@@ -58,15 +61,14 @@ class Client(threading.Thread):
             with open(LISTA_ARQ, 'r') as f:
                 client_list = f.read().splitlines()
                 f.close()
-
             print '\tarquivos no cliente: ', client_list
             server_list = server_files
-
-            # compara client_files e server_list, remove o que o cliente ja tiver
-            rppitems = list(set(client_list) & set(server_list))
-            for t in range(len(rppitems)):
-                server_list.remove(rppitems[t])
-            #na server_list sobra soh o que o cliente nao tem
+            
+            # compara os arquivos do cliente e do servidor, remove o que o cliente ja tiver
+            itensRepetidos = list(set(client_list) & set(server_list))
+            for t in range(len(itensRepetidos)):
+                server_list.remove(itensRepetidos[t])
+                
             print 'arquivos que o cliente precisa: ', server_list
 
             #envia uma requisicao de arquivos para o servidor
@@ -78,6 +80,7 @@ class Client(threading.Thread):
                     raise
                 pass
                 print 'except SocketError NO PAR'
+        #endif   
 
         for r in range(len(server_list)):
             jmsg = tcp.recv(1024)
@@ -85,7 +88,7 @@ class Client(threading.Thread):
             print type(jmsg)
             msg = json.loads(jmsg)
             print type(msg)
-            print 'Tramissao ', r,':', 'msg [dados]: ', msg['dados']
+            print 'Transmissao ', r,':', 'msg [dados]: ', msg['dados']
             # recebe arquivos que estavam faltando
             arquivos = msg['dados']
             print 'Recebendo arquivo: ', arquivos
@@ -97,7 +100,8 @@ class Client(threading.Thread):
             f= open(LISTA_ARQ, 'a')
             f.write(arquivos[0]+'\n')
             f.close()
-
+        #endfor
+        
         tcp.close()
 
 
